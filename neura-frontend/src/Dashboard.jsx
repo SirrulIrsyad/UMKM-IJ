@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+
 export default function Dashboard() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
@@ -42,26 +43,43 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-black text-white">
-      <h1 className="text-4xl font-bold mb-8 text-center">
-        Selamat Datang di <span className="text-blue-500">Dashboard NeuraGo!</span>
-      </h1>
+    <div className="flex flex-col min-h-screen w-screen bg-white text-gray-900">
+      <div className="flex-1 flex flex-col items-center justify-center">
+        <h1 className="text-4xl font-bold mb-8 text-center">
+          Selamat Datang di <span className="text-blue-600">Dashboard NeuraGo!</span>
+        </h1>
+{}
+{user ? (
+  <div className="text-center space-y-2">
+    <p><strong>Email:</strong> {user.email}</p>
+    <p><strong>Nama Bisnis:</strong> {user.businessName}</p>
+    <p><strong>WhatsApp:</strong> {user.whatsapp}</p>
 
-      {user ? (
-        <div className="text-center space-y-2">
-          <p><strong>Email:</strong> {user.email}</p>
-          <p><strong>Nama Bisnis:</strong> {user.businessName}</p>
-          <p><strong>WhatsApp:</strong> {user.whatsapp}</p>
-          <button
-            onClick={handleLogout}
-            className="mt-6 bg-white text-black px-4 py-2 rounded hover:bg-gray-200"
-          >
-            Logout
-          </button>
-        </div>
-      ) : (
-        <p>Memuat data pengguna...</p>
-      )}
+    <button
+      onClick={() => navigate("/chat")}
+      className="btn-primary mt-4 px-4 py-2 rounded"
+    >
+      Buka Chatbot
+    </button>
+
+    <button
+      onClick={() => navigate("/flow")}
+      className="btn-secondary mt-4 px-4 py-2 rounded"
+    >
+      Kelola ChatFlow
+    </button>
+
+    <button
+      onClick={handleLogout}
+      className="btn-light mt-4 px-4 py-2 rounded"
+    >
+      Logout
+    </button>
+  </div>
+) : (
+  <p>Memuat data pengguna...</p>
+)}
+      </div>
     </div>
   );
 }
