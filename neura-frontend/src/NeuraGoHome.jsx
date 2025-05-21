@@ -69,6 +69,13 @@ export default function NeuraGoHome() {
     }, 200);
   };
 
+  const handleSudahPunyaAkunClick = () => {
+    const loginSection = document.getElementById("login");
+    if (loginSection) {
+      loginSection.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <div className="bg-white text-gray-900 min-h-screen flex flex-col font-sans overflow-x-hidden w-full">
       <header className="flex justify-between items-center px-8 py-6 border-b border-gray-200 shadow-md w-full">
@@ -110,7 +117,7 @@ export default function NeuraGoHome() {
             <p className="text-gray-600">Sesuaikan alur percakapan sesuai kebutuhan UMKM-mu.</p>
           </div>
           <div className="p-8 border rounded-lg shadow hover:shadow-lg transition duration-300 ease-in-out">
-            <svg className="mx-auto mb-6 w-14 h-14 text-blue-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M3 14h18M3 18h18M3 6h18M3 22h18"></path></svg>
+            <svg className="mx-auto mb-6 w-14 h-14 text-blue-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M3 14h18M3 18h18M3 6h18"></path></svg>
             <h4 className="text-2xl font-semibold mb-3">Integrasi WhatsApp</h4>
             <p className="text-gray-600">Langsung terhubung dengan pelanggan dari aplikasi favorit mereka.</p>
           </div>
@@ -171,6 +178,13 @@ export default function NeuraGoHome() {
           </div>
           <button type="submit" className="w-full bg-blue-700 text-white font-bold py-3 rounded-lg hover:bg-blue-800 transition duration-300" >
             Daftar
+          </button>
+          <button
+            type="button"
+            onClick={handleSudahPunyaAkunClick}
+            className="w-full mt-4 text-blue-700 font-semibold underline hover:text-blue-900 transition duration-300"
+          >
+            Sudah punya akun?
           </button>
         </form>
       </section>
