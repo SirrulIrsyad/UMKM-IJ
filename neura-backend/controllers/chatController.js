@@ -4,7 +4,6 @@ const Chatflow = require("../models/ChatFlow");
 const ChatflowDetail = require("../models/ChatflowDetail");
 const aliasMap = require("../utils/aliasMapping");
 
-// 🔹 Tangani permintaan chat (POST /api/chat)
 exports.sendMessage = async (req, res) => {
   const userId = req.user.id;
   const { message } = req.body;
@@ -12,24 +11,18 @@ exports.sendMessage = async (req, res) => {
 
   try {
     // Simpan pesan user
-    await Message.create({
-      userId,
-      sender: "user",
-      text: message,
-    });
+    await Message.create({ userId, sender: "user", text: message });
 
-    // Ambil flow aktif milik user
-    const flow = await Chatflow.findOne({ userId });
+    // Ambil flow TERBARU milik user
+    const flow = await Chatflow.findOne({ userId }).sort({ createdAt: -1 });
     if (!flow) return res.json({ reply: "Flow belum dibuat." });
 
-    // ✅ Fix: pastikan pencarian flowDetail pakai string ID
-    const flowIdStr = flow._id.toString();
     const flowDetail = await ChatflowDetail.findOne({
       userId,
-      flowId: flowIdStr,
+      flowId: flow._id.toString(), // pastikan string
     });
 
-    if (!flowDetail || !flowDetail.blocks) {
+    if (!flowDetail || !flowDetail.blocks || flowDetail.blocks.length === 0) {
       return res.json({ reply: "Isi chatbot belum tersedia." });
     }
 
@@ -43,19 +36,15 @@ exports.sendMessage = async (req, res) => {
 
     // Cari blok FAQ
     const matchedFAQ = flowDetail.blocks.find(
-      (b) => b.type === "FAQ" && b.question.toLowerCase().includes(keyword)
-    );
+  (b) => b.type === "FAQ" && aliasMap[b.question.toLowerCase()] === keyword
+);
+
 
     const replyText = matchedFAQ
       ? matchedFAQ.answer
       : "Maaf, saya belum menemukan jawabannya.";
 
-    // Simpan balasan bot
-    await Message.create({
-      userId,
-      sender: "bot",
-      text: replyText,
-    });
+    await Message.create({ userId, sender: "bot", text: replyText });
 
     res.json({ reply: replyText });
   } catch (err) {
@@ -64,7 +53,6 @@ exports.sendMessage = async (req, res) => {
   }
 };
 
-// 🔹 Ambil semua pesan user (GET /api/chat)
 exports.getMessages = async (req, res) => {
   try {
     const messages = await Message.find({ userId: req.user.id }).sort({ createdAt: 1 });
