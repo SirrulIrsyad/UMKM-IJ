@@ -1,4 +1,3 @@
-// controllers/chatController.js
 const Message = require("../models/Message");
 const Chatflow = require("../models/ChatFlow");
 const ChatflowDetail = require("../models/ChatflowDetail");
@@ -19,31 +18,28 @@ exports.sendMessage = async (req, res) => {
 
     const flowDetail = await ChatflowDetail.findOne({
       userId,
-      flowId: flow._id.toString(), // pastikan string
+      flowId: flow._id.toString(),
     });
 
     if (!flowDetail || !flowDetail.blocks || flowDetail.blocks.length === 0) {
       return res.json({ reply: "Isi chatbot belum tersedia." });
     }
 
-    // Deteksi alias
-    const keyword = aliasMap[normalized];
-    if (!keyword) {
-      const fallback = "Maaf, saya belum mengerti. Coba ulangi pertanyaannya.";
-      await Message.create({ userId, sender: "bot", text: fallback });
-      return res.json({ reply: fallback });
-    }
+    // 🔄 Deteksi alias: jika tidak ada di aliasMapping, pakai langsung input user
+    const keyword = aliasMap[normalized] || normalized;
 
-    // Cari blok FAQ
+    // 🔍 Cari blok FAQ berdasarkan keyword hasil alias
     const matchedFAQ = flowDetail.blocks.find(
-  (b) => b.type === "FAQ" && aliasMap[b.question.toLowerCase()] === keyword
-);
-
+      (b) =>
+        b.type?.toLowerCase() === "faq" &&
+        b.question.trim().toLowerCase() === keyword
+    );
 
     const replyText = matchedFAQ
       ? matchedFAQ.answer
-      : "Maaf, saya belum menemukan jawabannya.";
+      : "Maaf, saya belum mengerti. Coba ulangi pertanyaannya.";
 
+    // Simpan balasan bot
     await Message.create({ userId, sender: "bot", text: replyText });
 
     res.json({ reply: replyText });

@@ -1,5 +1,5 @@
-// controllers/chatflowDetailController.js
 const ChatflowDetail = require("../models/ChatflowDetail");
+const updateAliasMapping = require("../utils/updateAliasMapping"); // 🔄 Import helper
 
 // ✅ Simpan atau update blok detail dari flow tertentu
 exports.saveFlowDetail = async (req, res) => {
@@ -7,7 +7,10 @@ exports.saveFlowDetail = async (req, res) => {
   const userId = req.user.id;
   const { blocks } = req.body;
 
+  console.log("📦 Data blok yang diterima:", JSON.stringify(blocks, null, 2));
+
   try {
+    // Cek apakah sudah ada detail sebelumnya
     let detail = await ChatflowDetail.findOne({ userId, flowId });
     if (!detail) {
       detail = new ChatflowDetail({ userId, flowId, blocks });
@@ -16,6 +19,33 @@ exports.saveFlowDetail = async (req, res) => {
     }
 
     await detail.save();
+
+    // 🔄 Auto-sinkron aliasMapping untuk blok FAQ
+    const newAliases = {};
+
+    blocks
+      .filter((block) => block.type?.toLowerCase() === "faq") // Normalisasi type
+      .forEach((faq) => {
+        const mainQ = faq.question?.trim().toLowerCase();
+        const aliases = faq.aliases || [];
+
+        if (mainQ) {
+          newAliases[mainQ] = mainQ; // Tambahkan pertanyaan utama
+          aliases.forEach((alias) => {
+            const cleanAlias = alias.trim().toLowerCase();
+            if (cleanAlias) {
+              newAliases[cleanAlias] = mainQ; // Alias diarahkan ke mainQ
+            }
+          });
+        }
+      });
+
+    console.log("🔁 Alias yang akan ditambahkan:", newAliases); // Untuk debugging
+
+    if (Object.keys(newAliases).length > 0) {
+      updateAliasMapping(newAliases);
+    }
+
     res.status(200).json({ success: true, detail });
   } catch (err) {
     console.error("❌ Error saveFlowDetail:", err.message);
