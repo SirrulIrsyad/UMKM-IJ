@@ -12,15 +12,16 @@ app.use(express.json());
 // 🔐 Routes
 const authRoutes = require('./routes/authRoutes');
 const chatRoutes = require('./routes/chatRoutes');
-const chatFlowRoutes = require('./routes/chatFlowRoutes'); // ⬅️ ✅ Tambahan baru
-const chatflowDetailRoutes = require('./routes/chatflowDetailRoute'); // ⬅️ untuk wizard
+const chatFlowRoutes = require('./routes/chatFlowRoutes'); // ⬅️ Chatflow utama
+const chatflowDetailRoutes = require('./routes/chatflowDetailRoute'); // ⬅️ Wizard builder
+const faqRoutes = require('./routes/faq'); // ✅ Tambahkan ini
 
-
+// 🌐 Gunakan route
 app.use('/api/auth', authRoutes);
 app.use('/api/chat', chatRoutes);
-app.use('/api/chatflow', chatFlowRoutes); // ⬅️ ✅ Daftarkan rute chatflow
-app.use('/api/chatflow', chatflowDetailRoutes); // ⬅️ endpoint wizard
-
+app.use('/api/chatflow', chatFlowRoutes);
+app.use('/api/chatflow', chatflowDetailRoutes);
+app.use('/api/faq', faqRoutes); // ✅ Aktifkan route untuk AI suggest-alias
 
 // 🚀 Start Server
 const PORT = process.env.PORT || 5000;

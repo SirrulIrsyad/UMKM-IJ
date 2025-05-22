@@ -26,5 +26,6 @@ module.exports = {
   "hai kak, selamat pagi": "hai kak, selamat pagi",
   "hai": "hai",
   "hai broh": "hai broh",
-  "xyxtuxyuxxy": "xyxtuxyuxxy"
+  "xyxtuxyuxxy": "xyxtuxyuxxy",
+  "mas pulang jam berapa": "mas pulang jam berapa"
 };
