@@ -22,7 +22,14 @@ export default function BuilderPage() {
         if (res.ok) {
           const data = await res.json();
           if (data.detail && data.detail.blocks) {
-            setBlocks(data.detail.blocks);
+            // Tambahkan aliases default jika belum ada (agar tidak undefined)
+            const normalizedBlocks = data.detail.blocks.map((block) => {
+              if (block.type === "FAQ") {
+                return { ...block, aliases: block.aliases || [] };
+              }
+              return block;
+            });
+            setBlocks(normalizedBlocks);
           }
         }
       } catch (err) {
@@ -32,16 +39,19 @@ export default function BuilderPage() {
     fetchBlocks();
   }, [flowId]);
 
+  // Tambah blok baru
   const addBlock = (newBlock) => {
     setBlocks([...blocks, newBlock]);
   };
 
+  // Update blok per index
   const updateBlock = (index, updatedBlock) => {
     const updated = [...blocks];
     updated[index] = updatedBlock;
     setBlocks(updated);
   };
 
+  // Simpan flow ke backend
   const submitFlow = async () => {
     const token = localStorage.getItem("token");
     if (!token) return alert("Token tidak ditemukan. Silakan login ulang.");
@@ -66,6 +76,7 @@ export default function BuilderPage() {
     }
   };
 
+  // Render form sesuai jenis blok
   const renderForm = (block, index) => {
     const sharedProps = {
       block,
@@ -93,16 +104,30 @@ export default function BuilderPage() {
       <div className="space-y-4 mb-6">
         <p className="text-lg">Tambah blok baru:</p>
         <div className="flex flex-wrap gap-3">
-          <button onClick={() => addBlock({ type: "FAQ", question: "", answer: "" })} className="bg-blue-600 text-white px-4 py-2 rounded">
+          <button
+            onClick={() =>
+              addBlock({ type: "FAQ", question: "", answer: "", aliases: [] })
+            }
+            className="bg-blue-600 text-white px-4 py-2 rounded"
+          >
             + Tambah FAQ
           </button>
-          <button onClick={() => addBlock({ type: "MENU", items: [] })} className="bg-blue-600 text-white px-4 py-2 rounded">
+          <button
+            onClick={() => addBlock({ type: "MENU", items: [] })}
+            className="bg-blue-600 text-white px-4 py-2 rounded"
+          >
             + Tambah Menu
           </button>
-          <button onClick={() => addBlock({ type: "FORM", fields: [] })} className="bg-blue-600 text-white px-4 py-2 rounded">
+          <button
+            onClick={() => addBlock({ type: "FORM", fields: [] })}
+            className="bg-blue-600 text-white px-4 py-2 rounded"
+          >
             + Tambah Formulir
           </button>
-          <button onClick={() => addBlock({ type: "NOTIF", answer: "" })} className="bg-blue-600 text-white px-4 py-2 rounded">
+          <button
+            onClick={() => addBlock({ type: "NOTIF", answer: "" })}
+            className="bg-blue-600 text-white px-4 py-2 rounded"
+          >
             + Tambah Notifikasi
           </button>
         </div>

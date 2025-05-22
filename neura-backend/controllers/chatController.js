@@ -3,10 +3,18 @@ const Chatflow = require("../models/ChatFlow");
 const ChatflowDetail = require("../models/ChatflowDetail");
 const aliasMap = require("../utils/aliasMapping");
 
+// Fungsi normalisasi teks (tanpa tanda baca, trim, lowercase)
+const normalizeText = (text) =>
+  text
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s]/g, "") // hapus tanda baca
+    .replace(/\s+/g, " ");   // hilangkan spasi berlebihan
+
 exports.sendMessage = async (req, res) => {
   const userId = req.user.id;
   const { message } = req.body;
-  const normalized = message.toLowerCase().trim();
+  const normalized = normalizeText(message);
 
   try {
     // Simpan pesan user
@@ -25,14 +33,20 @@ exports.sendMessage = async (req, res) => {
       return res.json({ reply: "Isi chatbot belum tersedia." });
     }
 
-    // 🔄 Deteksi alias: jika tidak ada di aliasMapping, pakai langsung input user
+    // 🔎 Coba cari alias dari pertanyaan
     const keyword = aliasMap[normalized] || normalized;
+
+    // Debug log untuk bantu lacak
+    console.log("🔎 Pesan user:", message);
+    console.log("🔎 Normalized:", normalized);
+    console.log("🔎 Keyword hasil aliasMapping:", keyword);
+    console.log("📦 Pertanyaan FAQ:", flowDetail.blocks.map(b => b.question));
 
     // 🔍 Cari blok FAQ berdasarkan keyword hasil alias
     const matchedFAQ = flowDetail.blocks.find(
       (b) =>
         b.type?.toLowerCase() === "faq" &&
-        b.question.trim().toLowerCase() === keyword
+        normalizeText(b.question) === keyword
     );
 
     const replyText = matchedFAQ

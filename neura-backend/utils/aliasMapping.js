@@ -27,5 +27,19 @@ module.exports = {
   "hai": "hai",
   "hai broh": "hai broh",
   "xyxtuxyuxxy": "xyxtuxyuxxy",
-  "mas pulang jam berapa": "mas pulang jam berapa"
+  "mas pulang jam berapa": "mas pulang jam berapa",
+  "penjelasan mas pulang jam berapa": "mas pulang jam berapa",
+  "info tentang mas pulang jam berapa": "mas pulang jam berapa",
+  "mas pulang jam berapa?": "mas pulang jam berapa",
+  "kamu sudah menikah mas?": "kamu sudah menikah mas?",
+  "kamu sudah menikah mas??": "kamu sudah menikah mas?",
+  "info tentang kamu sudah menikah mas?": "kamu sudah menikah mas?",
+  "penjelasan kamu sudah menikah mas?": "kamu sudah menikah mas?",
+  "hai sayang": "hai sayang",
+  "info tentang hai sayang": "hai sayang",
+  "hai sayang ?": "hai sayang",
+  "hai bro": "hai bro",
+  "info tentang hai bro": "hai bro",
+  "hai bro?": "hai bro",
+  "hai sayang?": "hai sayang"
 };
