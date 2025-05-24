@@ -9,7 +9,6 @@ export default function BuilderPage() {
   const { flowId } = useParams();
   const [blocks, setBlocks] = useState([]);
 
-  // ✅ Ambil histori blok saat halaman dibuka
   useEffect(() => {
     const fetchBlocks = async () => {
       const token = localStorage.getItem("token");
@@ -22,7 +21,6 @@ export default function BuilderPage() {
         if (res.ok) {
           const data = await res.json();
           if (data.detail && data.detail.blocks) {
-            // Tambahkan aliases default jika belum ada (agar tidak undefined)
             const normalizedBlocks = data.detail.blocks.map((block) => {
               if (block.type === "FAQ") {
                 return { ...block, aliases: block.aliases || [] };
@@ -39,19 +37,16 @@ export default function BuilderPage() {
     fetchBlocks();
   }, [flowId]);
 
-  // Tambah blok baru
   const addBlock = (newBlock) => {
     setBlocks([...blocks, newBlock]);
   };
 
-  // Update blok per index
   const updateBlock = (index, updatedBlock) => {
     const updated = [...blocks];
     updated[index] = updatedBlock;
     setBlocks(updated);
   };
 
-  // Simpan flow ke backend
   const submitFlow = async () => {
     const token = localStorage.getItem("token");
     if (!token) return alert("Token tidak ditemukan. Silakan login ulang.");
@@ -76,7 +71,6 @@ export default function BuilderPage() {
     }
   };
 
-  // Render form sesuai jenis blok
   const renderForm = (block, index) => {
     const sharedProps = {
       block,
@@ -98,59 +92,52 @@ export default function BuilderPage() {
   };
 
   return (
-    <div className="max-w-xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-4">Buat Alur Chatbot</h1>
+    <div className="min-h-screen w-screen bg-gradient-to-br from-white via-blue-50 to-blue-100 flex flex-col items-center py-10 px-2">
+      <div className="w-full max-w-3xl mx-auto">
+        <h1 className="text-3xl font-extrabold text-blue-700 text-center mb-4">Buat Alur Chatbot</h1>
+        <p className="text-center text-gray-600 mb-8">Tambah blok percakapan sesuai kebutuhan bisnismu.</p>
 
-      <div className="space-y-4 mb-6">
-        <p className="text-lg">Tambah blok baru:</p>
-        <div className="flex flex-wrap gap-3">
-          <button
-            onClick={() =>
-              addBlock({ type: "FAQ", question: "", answer: "", aliases: [] })
-            }
-            className="bg-blue-600 text-white px-4 py-2 rounded"
-          >
+        <div className="flex flex-wrap gap-4 justify-center mb-10">
+          <button onClick={() => addBlock({ type: "FAQ", question: "", answer: "", aliases: [] })} className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2 rounded shadow">
             + Tambah FAQ
           </button>
-          <button
-            onClick={() => addBlock({ type: "MENU", items: [] })}
-            className="bg-blue-600 text-white px-4 py-2 rounded"
-          >
+          <button onClick={() => addBlock({ type: "MENU", items: [] })} className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2 rounded shadow">
             + Tambah Menu
           </button>
-          <button
-            onClick={() => addBlock({ type: "FORM", fields: [] })}
-            className="bg-blue-600 text-white px-4 py-2 rounded"
-          >
+          <button onClick={() => addBlock({ type: "FORM", fields: [] })} className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2 rounded shadow">
             + Tambah Formulir
           </button>
-          <button
-            onClick={() => addBlock({ type: "NOTIF", answer: "" })}
-            className="bg-blue-600 text-white px-4 py-2 rounded"
-          >
+          <button onClick={() => addBlock({ type: "NOTIF", answer: "" })} className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2 rounded shadow">
             + Tambah Notifikasi
           </button>
         </div>
-      </div>
 
-      {blocks.length > 0 && (
-        <div className="space-y-6">
-          <p className="text-lg font-semibold">Isi Blok:</p>
-          {blocks.map((block, index) => (
-            <div key={index} className="p-4 border rounded bg-white shadow-sm">
-              <h2 className="font-semibold mb-2">Blok {index + 1}: {block.type}</h2>
-              {renderForm(block, index)}
+        {blocks.length > 0 && (
+          <div className="space-y-8">
+            <h2 className="text-xl font-semibold text-gray-800">Isi Blok:</h2>
+            {blocks.map((block, index) => (
+              <div key={index} className="p-6 border rounded-xl bg-white shadow-md flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                {/* Nama blok di kiri */}
+                <div className="flex-1 text-left">
+                  <h3 className="text-lg font-bold text-blue-600 mb-4">
+                    Blok {index + 1}: {block.type}
+                  </h3>
+                  {renderForm(block, index)}
+                </div>
+              </div>
+            ))}
+
+            <div className="text-center">
+              <button
+                onClick={submitFlow}
+                className="mt-6 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-full font-semibold shadow-md transition"
+              >
+                💾 Simpan & Aktifkan
+              </button>
             </div>
-          ))}
-
-          <button
-            onClick={submitFlow}
-            className="mt-6 bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded"
-          >
-            💾 Simpan & Aktifkan
-          </button>
-        </div>
-      )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

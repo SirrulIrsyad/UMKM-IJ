@@ -41,5 +41,8 @@ module.exports = {
   "hai bro": "hai bro",
   "info tentang hai bro": "hai bro",
   "hai bro?": "hai bro",
-  "hai sayang?": "hai sayang"
+  "hai sayang?": "hai sayang",
+  "pak gima": "pak gima",
+  "hai kak": "hai kak",
+  "hai kak?": "hai kak"
 };

@@ -36,7 +36,7 @@ export default function FlowPage() {
       method: "PATCH",
       headers: { Authorization: `Bearer ${token}` },
     });
-    fetchFlows(); // Refresh ulang agar status "aktif" terlihat
+    fetchFlows();
   };
 
   const deleteFlow = async (flowId) => {
@@ -53,49 +53,79 @@ export default function FlowPage() {
   }, []);
 
   return (
-    <div className="p-6 max-w-xl mx-auto">
-      <h1 className="text-xl font-bold mb-4">Daftar Chat Flow</h1>
+    <div className="min-h-screen w-screen bg-gradient-to-br from-white via-blue-50 to-blue-100 flex flex-col items-center py-12 px-2">
+      <div className="w-full max-w-4xl mx-auto">
+        <h1 className="text-3xl font-extrabold text-blue-700 text-center mb-10">
+          Manajemen Chat Flow
+        </h1>
 
-      <input
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        placeholder="Nama Flow"
-        className="border p-2 mr-2"
-      />
-      <button onClick={addFlow} className="bg-blue-600 text-white px-4 py-2 rounded">
-        Tambah Flow Baru
-      </button>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            addFlow();
+          }}
+          className="flex flex-col md:flex-row gap-4 items-center justify-center mb-10"
+        >
+          <input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Nama Flow Baru"
+            className="w-full max-w-md px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+          <button
+            type="submit"
+            className="bg-blue-600 text-white px-6 py-2 rounded-md shadow hover:bg-blue-700 transition"
+          >
+            Tambah Flow Baru
+          </button>
+        </form>
 
-      <ul className="mt-6 space-y-3">
-        {flows.map((flow) => (
-          <li key={flow._id} className="border p-4 rounded flex justify-between items-center">
-            <div>
-              <p className="font-semibold">{flow.name}</p>
-              {flow.isActive && <span className="text-green-600 text-sm">✅ Aktif</span>}
+        <div className="grid grid-cols-1 gap-6">
+          {flows.map((flow) => (
+            <div
+              key={flow._id}
+              className="bg-white shadow-md rounded-xl p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4"
+            >
+              {/* Nama dan status di kiri */}
+              <div className="flex-1 text-left">
+                <h2 className="text-lg font-semibold text-gray-800">{flow.name}</h2>
+                <p className="text-sm text-gray-500 mt-1">
+                  Status:{" "}
+                  {flow.isActive ? (
+                    <span className="text-green-600 font-medium">Aktif</span>
+                  ) : (
+                    <span className="text-gray-400 italic">Nonaktif</span>
+                  )}
+                </p>
+              </div>
+              {/* Tombol di kanan */}
+              <div className="flex gap-2 flex-wrap justify-end">
+                <button
+                  onClick={() => navigate(`/builder/${flow._id}`)}
+                  className="bg-yellow-400 text-white px-4 py-2 rounded-md hover:bg-yellow-500 transition text-sm"
+                >
+                  Builder
+                </button>
+                {!flow.isActive && (
+                  <button
+                    onClick={() => activateFlow(flow._id)}
+                    className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition text-sm"
+                  >
+                    Aktifkan
+                  </button>
+                )}
+                <button
+                  onClick={() => deleteFlow(flow._id)}
+                  className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition text-sm"
+                >
+                  Hapus
+                </button>
+              </div>
             </div>
-            <div className="flex gap-2">
-              <button
-                onClick={() => navigate(`/builder/${flow._id}`)}
-                className="bg-yellow-500 text-white px-3 py-1 rounded text-sm"
-              >
-                Builder
-              </button>
-              <button
-                onClick={() => activateFlow(flow._id)}
-                className="bg-green-600 text-white px-3 py-1 rounded text-sm"
-              >
-                Aktifkan
-              </button>
-              <button
-                onClick={() => deleteFlow(flow._id)}
-                className="bg-red-600 text-white px-3 py-1 rounded text-sm"
-              >
-                Hapus
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

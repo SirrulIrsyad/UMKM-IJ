@@ -71,3 +71,15 @@ exports.getMessages = async (req, res) => {
     res.status(500).json({ message: "Gagal mengambil pesan" });
   }
 };
+
+exports.resetMessages = async (req, res) => {
+  try {
+    console.log("Reset messages request received for user:", req.user.id);
+    const result = await Message.deleteMany({ userId: req.user.id });
+    console.log(`Deleted ${result.deletedCount} messages for user ${req.user.id}`);
+    res.status(200).json({ message: "Semua pesan telah dihapus." });
+  } catch (err) {
+    console.error("Gagal reset pesan:", err);
+    res.status(500).json({ error: "Gagal menghapus semua pesan." });
+  }
+};
